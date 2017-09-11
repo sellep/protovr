@@ -10,11 +10,15 @@ namespace Assets.Behaviour.Player
 
     public class LaserWeaponBehaviour : MonoBehaviour
     {
+        public const float FACTOR_DISCHARGE = 0.75f;
+        public const float FACTOR_CHARGE = 0.25f;
+        public const int MAX_BEAM_DISTANCE = 100;
+
         public Transform LeftHand;
         public Transform RightHand;
 
-        public LineRenderer LeftHandBeam;
-        public LineRenderer RightHandBeam;
+        public LineRenderer LeftBeam;
+        public LineRenderer RightBeam;
 
         public float LeftCharge = 1f;
         public float RightCharge = 1f;
@@ -23,8 +27,8 @@ namespace Assets.Behaviour.Player
         {
             GameObject prefab = Resources.Load<GameObject>("Prefabs/Player/Beam");
 
-            LeftHandBeam = Instantiate(prefab, transform).GetComponent<LineRenderer>();
-            RightHandBeam = Instantiate(prefab, transform).GetComponent<LineRenderer>();
+            LeftBeam = Instantiate(prefab, transform).GetComponent<LineRenderer>();
+            RightBeam = Instantiate(prefab, transform).GetComponent<LineRenderer>();
 
             LeftHand = transform.Find("LeftHand");
             RightHand = transform.Find("RightHand");
@@ -32,57 +36,61 @@ namespace Assets.Behaviour.Player
 
         public void Start()
         {
-            LeftHandBeam.enabled = false;
-            RightHandBeam.enabled = false;
+            LeftBeam.enabled = false;
+            RightBeam.enabled = false;
         }
 
         public void Update()
         {
-            if (Input.GetMouseButtonDown(0))
+            HandleWeapon(0, LeftHand, LeftBeam, ref LeftCharge);
+            HandleWeapon(1, RightHand, RightBeam, ref RightCharge);
+        }
+
+        private void HandleWeapon(int button, Transform hand, LineRenderer beam, ref float charge)
+        {
+            if (Input.GetMouseButtonDown(button))
             {
-                StopCoroutine("FireLeftLaser");
-                StartCoroutine("FireLeftLaser");
+                beam.enabled = true;
+
+                ApplyRay(hand, beam);
             }
-            else if (Input.GetMouseButtonDown(1))
+            else if (Input.GetMouseButton(button))
             {
-                StopCoroutine("FireRightLaser");
-                StartCoroutine("FireRightLaser");
+                if (charge > 0)
+                {
+                    charge -= Time.deltaTime * FACTOR_DISCHARGE;
+                    ApplyRay(hand, beam);
+                }
+                else
+                {
+                    beam.enabled = false;
+                }
+            }
+            else if (Input.GetMouseButtonUp(button))
+            {
+                beam.enabled = false;
+            }
+            else if (LeftCharge < 1)
+            {
+                charge += Time.deltaTime * FACTOR_CHARGE;
             }
         }
 
-        IEnumerator FireLeftLaser()
+        private void ApplyRay(Transform hand, LineRenderer beam)
         {
-            LeftHandBeam.enabled = true;
+            Ray ray = new Ray(hand.position, transform.forward);
+            RaycastHit hit;
 
-            while (Input.GetMouseButton(0) && LeftCharge > 0)
+            beam.SetPosition(0, hand.position);
+
+            if (Physics.Raycast(ray, out hit, MAX_BEAM_DISTANCE))
             {
-                if (LeftCharge <= 0)
-                    break;
-
-                Ray ray = new Ray(LeftHand.position, transform.forward);
-                LeftHandBeam.SetPosition(0, LeftHand.position);
-                LeftHandBeam.SetPosition(1, ray.GetPoint(100));
-
-                yield return null;
+                beam.SetPosition(1, hit.point);
             }
-
-            LeftHandBeam.enabled = false;
-        }
-
-        IEnumerator FireRightLaser()
-        {
-            RightHandBeam.enabled = true;
-
-            while (Input.GetMouseButton(1) && RightCharge > 0)
+            else
             {
-                Ray ray = new Ray(RightHand.position, transform.forward);
-                RightHandBeam.SetPosition(0, RightHand.position);
-                RightHandBeam.SetPosition(1, ray.GetPoint(100));
-
-                yield return null;
+                beam.SetPosition(1, ray.GetPoint(MAX_BEAM_DISTANCE));
             }
-
-            RightHandBeam.enabled = false;
         }
     }
 }
