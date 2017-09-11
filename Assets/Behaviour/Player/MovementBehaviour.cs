@@ -13,52 +13,59 @@ namespace Assets.Behaviour.Player
         public float SpeedRunning = 24.0f;
 
         public float JumpSpeed = 64.0f;
+        public bool IsJump;
+
+        /*
+         * Rotation speed in degrees/second
+         */
+        public float RotationSpeed = 360;
+        public float AirRotationSpeed = 120;
 
 
         public float gravity = 20.0F;
-        public float rotate = 360; // rotate speed in degrees/second
-        private Vector3 moveDirection = Vector3.zero;
-        public CharacterController Character;
+        private CharacterController _Character;
+
+        public Vector3 MoveDirection = Vector3.zero;
 
         public void Awake()
         {
-            Character = GetComponent<CharacterController>();
+            _Character = GetComponent<CharacterController>();
         }
+
+        
 
         void Update()
         {
-            if (Character.isGrounded)
+            if (_Character.isGrounded)
             {
-                moveDirection = new Vector3(0, 0, Input.GetAxis("Vertical"));
-                moveDirection = transform.TransformDirection(moveDirection);
+                IsJump = false;
+
+                MoveDirection = transform.TransformDirection(new Vector3(0, 0, Input.GetAxis("Vertical")));
 
                 if (Input.GetKey(KeyCode.LeftShift))
                 {
-                    Debug.Log("running");
-                    moveDirection *= SpeedRunning;
+                    MoveDirection *= SpeedRunning;
                 }
                 else
                 {
-                    moveDirection *= SpeedNormal;
+                    MoveDirection *= SpeedNormal;
                 }
 
-                if (Input.GetButtonDown("Jump"))
+                if (Input.GetButton("Jump"))
                 {
-                    moveDirection.y = JumpSpeed;
+                    MoveDirection.y = JumpSpeed;
+                    IsJump = true;
                 }
 
-                transform.Rotate(0, Input.GetAxis("Horizontal") * rotate * Time.deltaTime, 0);
+                transform.Rotate(0, Input.GetAxis("Horizontal") * RotationSpeed * Time.deltaTime, 0);
             }
-            else
+            else if (IsJump)
             {
-                if (Input.GetButtonDown("Jump"))
-                {
-                    moveDirection.y += JumpSpeed;
-                }
+                MoveDirection = Quaternion.Euler(0, Input.GetAxis("Horizontal"), 0) * MoveDirection;
             }
 
-            moveDirection.y -= gravity * Time.deltaTime;
-            Character.Move(moveDirection * Time.deltaTime);
+            MoveDirection.y -= gravity * Time.deltaTime;
+            _Character.Move(MoveDirection * Time.deltaTime);
         }
     }
 }
