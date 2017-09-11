@@ -24,10 +24,10 @@ namespace Assets.Behaviour.Player
 
         public void Update()
         {
-            Yaw += SpeedH * Input.GetAxis("Mouse X");
-            Pitch -= SpeedV * Input.GetAxis("Mouse Y");
+            Yaw = SpeedH * Input.GetAxis("Mouse X");
+            Pitch = SpeedV * Input.GetAxis("Mouse Y") * -1;
 
-            transform.eulerAngles = new Vector3(Pitch, Yaw, 0.0f);
+            transform.eulerAngles += new Vector3(Pitch, Yaw, 0.0f);
         }
     }
 }
