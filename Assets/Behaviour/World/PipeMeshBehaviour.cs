@@ -7,54 +7,55 @@ using UnityEngine;
 namespace Assets.Behaviour.World
 {
 
-    [RequireComponent(typeof(MeshRenderer), typeof(MeshFilter))]
     public class PipeMeshBehaviour : MonoBehaviour
     {
 
-        public void Start()
+        public int Width = 100;
+        public int Height = 100;
+
+        private Mesh _Mesh;
+
+        public void Awake()
         {
-            MeshFilter filter = GetComponent<MeshFilter>();
+            _Mesh = new Mesh();
 
-            filter.mesh = new Mesh();
-
-            int width = 500;
-            int height = 100;
-
-            CreateVertices(filter.mesh, width, height);
-            CreateTriangles(filter.mesh, width);
-            CreateUVS(filter.mesh, width, height);
-            SetNormals(filter.mesh, width);
-
-            //filter.mesh.vertices = new Vector3[] { new Vector3(0, 0, 0), new Vector3(1, 0, 0), new Vector3(0, 1, 0), new Vector3(1, 1, 0) };
-            //filter.mesh.uv = new Vector2[] { new Vector2(0, 0), new Vector2(1, 0), new Vector2(0, 1), new Vector2(1, 1) };
-            //filter.mesh.triangles = new int[] { 0, 3, 2, 0, 1, 3 };
-
-            GetComponent<MeshRenderer>().material = Resources.Load<Material>("Materials/Surface");
+            CreateVertices(_Mesh, Width, Height);
+            CreateTriangles(_Mesh, Width);
+            CreateUVS(_Mesh, Width, Height);
         }
 
-        private void SetNormals(Mesh m, int width)
+        public void Start()
         {
-            Vector3[] normals = new Vector3[width * 2];
-            float degree = 360.0f / width;
+            GetComponent<MeshFilter>().mesh = _Mesh;
+            GetComponent<MeshCollider>().sharedMesh = _Mesh;
 
-            for (int i = 0; i < width; i++)
-            {
-                //normals[i * 2 + 0] = 
-            }
 
-            m.normals = normals;
+            transform.localPosition += new Vector3(0, 0, Width / (2 * Mathf.PI));
         }
 
         private static void CreateVertices(Mesh m, int width, int height)
         {
             Vector3[] vertices = new Vector3[width * 4];
+            float degree = 360.0f / width;
 
-            for (int i = 0; i < width; i++)
+            vertices[0] = new Vector3(0, 0, 0);
+            vertices[1] = Quaternion.AngleAxis(degree, Vector3.up) * new Vector3(1, 0, 0);
+            vertices[2] = new Vector3(0, height, 0);
+            vertices[3] = Quaternion.AngleAxis(degree, Vector3.up) * new Vector3(1, height, 0);
+
+            for (int i = 1; i < width; i++)
             {
-                vertices[i * 4 + 0] = new Vector3(i, 0, 0);
-                vertices[i * 4 + 1] = new Vector3(i + 1, 0, 0);
-                vertices[i * 4 + 2] = new Vector3(i, height, 0);
-                vertices[i * 4 + 3] = new Vector3(i + 1, height, 0);
+                vertices[i * 4 + 0] = vertices[(i - 1) * 4 + 1];
+                vertices[i * 4 + 2] = vertices[(i - 1) * 4 + 3];
+
+                Vector3 newv = vertices[i * 4 + 0];
+                newv.x++;
+                vertices[i * 4 + 1] = Quaternion.AngleAxis(degree, Vector3.up) * newv;
+
+
+                newv = vertices[i * 4 + 2];
+                newv.x++;
+                vertices[i * 4 + 3] = Quaternion.AngleAxis(degree, Vector3.up) * newv;
             }
 
             m.vertices = vertices;
