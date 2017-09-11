@@ -9,10 +9,11 @@ namespace Assets.Behaviour.Player
 
     public class MovementBehaviour : MonoBehaviour
     {
+        public const float GRAVITY_FORCE = 20.0F;
         public float SpeedNormal = 6.0f;
         public float SpeedRunning = 24.0f;
 
-        public float JumpSpeed = 64.0f;
+        public float JumpSpeed = 32.0f;
         public bool IsJump;
 
         /*
@@ -22,7 +23,7 @@ namespace Assets.Behaviour.Player
         public float AirRotationSpeed = 120;
 
 
-        public float gravity = 20.0F;
+        
         private CharacterController _Character;
 
         public Vector3 MoveDirection = Vector3.zero;
@@ -32,9 +33,7 @@ namespace Assets.Behaviour.Player
             _Character = GetComponent<CharacterController>();
         }
 
-        
-
-        void Update()
+        public void Update()
         {
             if (_Character.isGrounded)
             {
@@ -64,7 +63,7 @@ namespace Assets.Behaviour.Player
                 MoveDirection = Quaternion.Euler(0, Input.GetAxis("Horizontal"), 0) * MoveDirection;
             }
 
-            MoveDirection.y -= gravity * Time.deltaTime;
+            MoveDirection.y -= GRAVITY_FORCE * Time.deltaTime;
             _Character.Move(MoveDirection * Time.deltaTime);
         }
     }
