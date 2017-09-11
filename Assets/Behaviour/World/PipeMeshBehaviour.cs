@@ -22,6 +22,8 @@ namespace Assets.Behaviour.World
             CreateVertices(_Mesh, Width, Height);
             CreateTriangles(_Mesh, Width);
             CreateUVS(_Mesh, Width, Height);
+
+            _Mesh.RecalculateNormals();
         }
 
         public void Start()
