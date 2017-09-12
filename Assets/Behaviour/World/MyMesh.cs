@@ -45,7 +45,7 @@ namespace Assets.Behaviour.World
             };
 
             GetComponent<MeshFilter>().mesh = _Mesh;
-            //GetComponent<MeshCollider>().sharedMesh = _Mesh;
+            GetComponent<MeshCollider>().sharedMesh = _Mesh;
 
             _Mesh.RecalculateNormals();
         }

@@ -13,7 +13,7 @@ namespace Assets.Behaviour.Player
         public float SpeedNormal = 6.0f;
         public float SpeedRunning = 24.0f;
 
-        public float JumpSpeed = 32.0f;
+        public float JumpSpeed = 24.0f;
         public bool IsJump;
 
         /*
@@ -22,8 +22,6 @@ namespace Assets.Behaviour.Player
         public float RotationSpeed = 360;
         public float AirRotationSpeed = 120;
 
-
-        
         private CharacterController _Character;
 
         public Vector3 MoveDirection = Vector3.zero;

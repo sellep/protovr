@@ -16,10 +16,14 @@ namespace Assets.Behaviour.Player
         private float Yaw = 0.0f;
         private float Pitch = 0.0f;
 
+        private Transform _Head;
+
         public void Start()
         {
             Cursor.visible = false;
             Cursor.lockState = CursorLockMode.Locked;
+
+            _Head = transform.Find("Head");
         }
 
         public void Update()
@@ -27,7 +31,8 @@ namespace Assets.Behaviour.Player
             Yaw = SpeedH * Input.GetAxis("Mouse X");
             Pitch = SpeedV * Input.GetAxis("Mouse Y") * -1;
 
-            transform.eulerAngles += new Vector3(Pitch, Yaw, 0.0f);
+            transform.eulerAngles += new Vector3(0, Yaw, 0.0f);
+            _Head.localEulerAngles += new Vector3(Pitch, 0, 0.0f);
         }
     }
 }
