@@ -12,15 +12,11 @@ namespace Assets.Behaviour.Player
         public const float GRAVITY_FORCE = 20.0F;
         public float SpeedNormal = 6.0f;
         public float SpeedRunning = 24.0f;
+        public float AirFactor = 0.2f;
 
         public float JumpSpeed = 24.0f;
         public bool IsJump;
 
-        /*
-         * Rotation speed in degrees/second
-         */
-        public float RotationSpeed = 360;
-        public float AirRotationSpeed = 120;
 
         private CharacterController _Character;
 
@@ -37,7 +33,7 @@ namespace Assets.Behaviour.Player
             {
                 IsJump = false;
 
-                MoveDirection = transform.TransformDirection(new Vector3(0, 0, Input.GetAxis("Vertical")));
+                MoveDirection = transform.TransformDirection(new Vector3(Input.GetAxis("Horizontal"), 0, Input.GetAxis("Vertical")));
 
                 if (Input.GetKey(KeyCode.LeftShift))
                 {
@@ -54,11 +50,11 @@ namespace Assets.Behaviour.Player
                     IsJump = true;
                 }
 
-                transform.Rotate(0, Input.GetAxis("Horizontal") * RotationSpeed * Time.deltaTime, 0);
+                //transform.Rotate(0, Input.GetAxis("Horizontal") * RotationSpeed * Time.deltaTime, 0);
             }
             else if (IsJump)
             {
-                MoveDirection = Quaternion.Euler(0, Input.GetAxis("Horizontal"), 0) * MoveDirection;
+                MoveDirection += AirFactor * transform.TransformDirection(new Vector3(Input.GetAxis("Horizontal"), 0, Input.GetAxis("Vertical")));
             }
 
             MoveDirection.y -= GRAVITY_FORCE * Time.deltaTime;
