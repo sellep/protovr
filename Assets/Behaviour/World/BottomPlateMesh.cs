@@ -19,12 +19,12 @@ namespace Assets.Behaviour.World
 
         public void OnCollisionEnter(Collision collision)
         {
-            Debug.Log("COLLISION!!!");
+            //Debug.Log("COLLISION!!!");
         }
 
         public void OnTriggerEnter(Collider other)
         {
-            Debug.Log("TRIGGER!!!");
+            //Debug.Log("TRIGGER!!!");
         }
 
         public void OnValidate()
@@ -51,14 +51,6 @@ namespace Assets.Behaviour.World
             {
                 0, 2, 1, 2, 3, 1
             };
-
-            //_Mesh.uv = new[]
-            //{
-            //    new Vector2(0, 0),
-            //    new Vector2(1f / Width, 0),
-            //    new Vector2(0, 1f / Height),
-            //    new Vector2(1f / Width, 1f / Height)
-            //};
 
             _Mesh.uv = new[]
             {

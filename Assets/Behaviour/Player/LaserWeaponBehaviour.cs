@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Assets.Behaviour.World;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,9 +11,9 @@ namespace Assets.Behaviour.Player
 
     public class LaserWeaponBehaviour : MonoBehaviour
     {
-        public const float FACTOR_DISCHARGE = 0.75f;
+        public const float FACTOR_DISCHARGE = 0.15f;
         public const float FACTOR_CHARGE = 0.25f;
-        public const int MAX_BEAM_DISTANCE = 100;
+        public const int MAX_BEAM_DISTANCE = 500;
 
         public Transform LeftHand;
         public Transform RightHand;
@@ -23,6 +24,8 @@ namespace Assets.Behaviour.Player
         public float LeftCharge = 1f;
         public float RightCharge = 1f;
 
+        private Vector2 _ScreenMiddle;
+
         public void Awake()
         {
             GameObject prefab = Resources.Load<GameObject>("Prefabs/Player/Beam");
@@ -32,6 +35,8 @@ namespace Assets.Behaviour.Player
 
             LeftHand = transform.Find("LeftHand");
             RightHand = transform.Find("RightHand");
+
+            _ScreenMiddle = new Vector2(Screen.width * .5f, Screen.height * .5f);
         }
 
         public void Start()
@@ -78,14 +83,24 @@ namespace Assets.Behaviour.Player
 
         private void ApplyRay(Transform hand, LineRenderer beam)
         {
-            Ray ray = new Ray(hand.position, transform.forward);
+            Ray ray = Camera.main.ScreenPointToRay(_ScreenMiddle);
             RaycastHit hit;
 
             beam.SetPosition(0, hand.position);
 
-            if (Physics.Raycast(ray, out hit, MAX_BEAM_DISTANCE))
+            if (Physics.Raycast(ray, out hit))
             {
                 beam.SetPosition(1, hit.point);
+
+                if (hit.transform.gameObject.tag == "Target")
+                {
+                    Destroy(hit.transform.gameObject);
+                }
+
+                //if (hit.transform.gameObject.tag == "Target")
+                //{
+                //    GameObject.Find("Target Spawn Area").GetComponent<SpawnableAreaBehaviour>().OnTargetHit(hit.transform.gameObject);
+                //}
             }
             else
             {
