@@ -26,7 +26,7 @@ namespace Assets.Behaviour.Player
             _Head = transform.Find("Head");
         }
 
-        public void Update()
+        public void LateUpdate()
         {
             Yaw = SpeedH * Input.GetAxis("Mouse X");
             Pitch = SpeedV * Input.GetAxis("Mouse Y") * -1;

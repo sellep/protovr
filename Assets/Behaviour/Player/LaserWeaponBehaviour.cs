@@ -96,11 +96,6 @@ namespace Assets.Behaviour.Player
                 {
                     Destroy(hit.transform.gameObject);
                 }
-
-                //if (hit.transform.gameObject.tag == "Target")
-                //{
-                //    GameObject.Find("Target Spawn Area").GetComponent<SpawnableAreaBehaviour>().OnTargetHit(hit.transform.gameObject);
-                //}
             }
             else
             {

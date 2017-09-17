@@ -7,7 +7,7 @@ using UnityEngine;
 namespace Assets.Behaviour.World
 {
 
-    [RequireComponent(typeof(MeshFilter), typeof(MeshCollider))]
+    [RequireComponent(typeof(MeshFilter), typeof(MeshCollider), typeof(Rigidbody))]
     [ExecuteInEditMode]
     public class BottomPlateMesh : MonoBehaviour
     {
@@ -16,16 +16,7 @@ namespace Assets.Behaviour.World
         public int Height = 1;
 
         private Mesh _Mesh;
-
-        public void OnCollisionEnter(Collision collision)
-        {
-            //Debug.Log("COLLISION!!!");
-        }
-
-        public void OnTriggerEnter(Collider other)
-        {
-            //Debug.Log("TRIGGER!!!");
-        }
+        private Rigidbody _Ridig;
 
         public void OnValidate()
         {
@@ -33,6 +24,12 @@ namespace Assets.Behaviour.World
 
             GetComponent<MeshFilter>().mesh = _Mesh;
             GetComponent<MeshCollider>().sharedMesh = _Mesh;
+            _Ridig = GetComponent<Rigidbody>();
+        }
+
+        public void FixedUpdate()
+        {
+            Debug.Log(_Ridig.centerOfMass);
         }
 
         private void CreateMesh()
