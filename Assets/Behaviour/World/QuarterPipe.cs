@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 [RequireComponent(typeof(MeshFilter))]
+[ExecuteInEditMode]
 public class QuarterPipe : MonoBehaviour
 {
 
@@ -11,6 +12,11 @@ public class QuarterPipe : MonoBehaviour
     public float Length = 10;
 
     private Mesh _Mesh;
+
+    public void Start()
+    {
+        OnValidate();
+    }
 
     private void OnValidate()
     {
